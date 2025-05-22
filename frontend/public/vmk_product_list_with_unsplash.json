@@ -1,0 +1,352 @@
+[
+  {
+    "id": 1,
+    "name": "Smartphone",
+    "category": "Electronics",
+    "price": "$270",
+    "image": "https://source.unsplash.com/300x300/?smartphone"
+  },
+  {
+    "id": 2,
+    "name": "Laptop",
+    "category": "Electronics",
+    "price": "$107",
+    "image": "https://source.unsplash.com/300x300/?laptop"
+  },
+  {
+    "id": 3,
+    "name": "Tv",
+    "category": "Electronics",
+    "price": "$388",
+    "image": "https://source.unsplash.com/300x300/?tv"
+  },
+  {
+    "id": 4,
+    "name": "Earbuds",
+    "category": "Electronics",
+    "price": "$24",
+    "image": "https://source.unsplash.com/300x300/?earbuds"
+  },
+  {
+    "id": 5,
+    "name": "Speaker",
+    "category": "Electronics",
+    "price": "$464",
+    "image": "https://source.unsplash.com/300x300/?speaker"
+  },
+  {
+    "id": 6,
+    "name": "Shirt",
+    "category": "Fashion",
+    "price": "$302",
+    "image": "https://source.unsplash.com/300x300/?shirt"
+  },
+  {
+    "id": 7,
+    "name": "Dress",
+    "category": "Fashion",
+    "price": "$20",
+    "image": "https://source.unsplash.com/300x300/?dress"
+  },
+  {
+    "id": 8,
+    "name": "Sneakers",
+    "category": "Fashion",
+    "price": "$413",
+    "image": "https://source.unsplash.com/300x300/?sneakers"
+  },
+  {
+    "id": 9,
+    "name": "Handbag",
+    "category": "Fashion",
+    "price": "$491",
+    "image": "https://source.unsplash.com/300x300/?handbag"
+  },
+  {
+    "id": 10,
+    "name": "Scarf",
+    "category": "Fashion",
+    "price": "$422",
+    "image": "https://source.unsplash.com/300x300/?scarf"
+  },
+  {
+    "id": 11,
+    "name": "Air Fryer",
+    "category": "Home Appliances",
+    "price": "$290",
+    "image": "https://source.unsplash.com/300x300/?air%20fryer"
+  },
+  {
+    "id": 12,
+    "name": "Vacuum",
+    "category": "Home Appliances",
+    "price": "$233",
+    "image": "https://source.unsplash.com/300x300/?vacuum"
+  },
+  {
+    "id": 13,
+    "name": "Microwave",
+    "category": "Home Appliances",
+    "price": "$23",
+    "image": "https://source.unsplash.com/300x300/?microwave"
+  },
+  {
+    "id": 14,
+    "name": "Blender",
+    "category": "Home Appliances",
+    "price": "$99",
+    "image": "https://source.unsplash.com/300x300/?blender"
+  },
+  {
+    "id": 15,
+    "name": "Kettle",
+    "category": "Home Appliances",
+    "price": "$197",
+    "image": "https://source.unsplash.com/300x300/?kettle"
+  },
+  {
+    "id": 16,
+    "name": "Facial Cleanser",
+    "category": "Beauty & Personal Care",
+    "price": "$458",
+    "image": "https://source.unsplash.com/300x300/?facial%20cleanser"
+  },
+  {
+    "id": 17,
+    "name": "Moisturizer",
+    "category": "Beauty & Personal Care",
+    "price": "$365",
+    "image": "https://source.unsplash.com/300x300/?moisturizer"
+  },
+  {
+    "id": 18,
+    "name": "Lipstick",
+    "category": "Beauty & Personal Care",
+    "price": "$321",
+    "image": "https://source.unsplash.com/300x300/?lipstick"
+  },
+  {
+    "id": 19,
+    "name": "Shampoo",
+    "category": "Beauty & Personal Care",
+    "price": "$220",
+    "image": "https://source.unsplash.com/300x300/?shampoo"
+  },
+  {
+    "id": 20,
+    "name": "Hair Trimmer",
+    "category": "Beauty & Personal Care",
+    "price": "$231",
+    "image": "https://source.unsplash.com/300x300/?hair%20trimmer"
+  },
+  {
+    "id": 21,
+    "name": "Yoga Mat",
+    "category": "Sports & Outdoors",
+    "price": "$240",
+    "image": "https://source.unsplash.com/300x300/?yoga%20mat"
+  },
+  {
+    "id": 22,
+    "name": "Mountain Bike",
+    "category": "Sports & Outdoors",
+    "price": "$20",
+    "image": "https://source.unsplash.com/300x300/?mountain%20bike"
+  },
+  {
+    "id": 23,
+    "name": "Tent",
+    "category": "Sports & Outdoors",
+    "price": "$251",
+    "image": "https://source.unsplash.com/300x300/?tent"
+  },
+  {
+    "id": 24,
+    "name": "Fitness Tracker",
+    "category": "Sports & Outdoors",
+    "price": "$233",
+    "image": "https://source.unsplash.com/300x300/?fitness%20tracker"
+  },
+  {
+    "id": 25,
+    "name": "Dumbbell",
+    "category": "Sports & Outdoors",
+    "price": "$193",
+    "image": "https://source.unsplash.com/300x300/?dumbbell"
+  },
+  {
+    "id": 26,
+    "name": "Building Blocks",
+    "category": "Toys & Games",
+    "price": "$228",
+    "image": "https://source.unsplash.com/300x300/?building%20blocks"
+  },
+  {
+    "id": 27,
+    "name": "Rc Car",
+    "category": "Toys & Games",
+    "price": "$248",
+    "image": "https://source.unsplash.com/300x300/?rc%20car"
+  },
+  {
+    "id": 28,
+    "name": "Puzzle",
+    "category": "Toys & Games",
+    "price": "$322",
+    "image": "https://source.unsplash.com/300x300/?puzzle"
+  },
+  {
+    "id": 29,
+    "name": "Board Game",
+    "category": "Toys & Games",
+    "price": "$363",
+    "image": "https://source.unsplash.com/300x300/?board%20game"
+  },
+  {
+    "id": 30,
+    "name": "Dollhouse",
+    "category": "Toys & Games",
+    "price": "$12",
+    "image": "https://source.unsplash.com/300x300/?dollhouse"
+  },
+  {
+    "id": 31,
+    "name": "Novel",
+    "category": "Books & Stationery",
+    "price": "$231",
+    "image": "https://source.unsplash.com/300x300/?novel"
+  },
+  {
+    "id": 32,
+    "name": "Notebook",
+    "category": "Books & Stationery",
+    "price": "$264",
+    "image": "https://source.unsplash.com/300x300/?notebook"
+  },
+  {
+    "id": 33,
+    "name": "Pen",
+    "category": "Books & Stationery",
+    "price": "$360",
+    "image": "https://source.unsplash.com/300x300/?pen"
+  },
+  {
+    "id": 34,
+    "name": "Desk Organizer",
+    "category": "Books & Stationery",
+    "price": "$457",
+    "image": "https://source.unsplash.com/300x300/?desk%20organizer"
+  },
+  {
+    "id": 35,
+    "name": "Art Supplies",
+    "category": "Books & Stationery",
+    "price": "$341",
+    "image": "https://source.unsplash.com/300x300/?art%20supplies"
+  },
+  {
+    "id": 36,
+    "name": "Car Vacuum",
+    "category": "Automotive",
+    "price": "$198",
+    "image": "https://source.unsplash.com/300x300/?car%20vacuum"
+  },
+  {
+    "id": 37,
+    "name": "Gps",
+    "category": "Automotive",
+    "price": "$391",
+    "image": "https://source.unsplash.com/300x300/?gps"
+  },
+  {
+    "id": 38,
+    "name": "Car Seat",
+    "category": "Automotive",
+    "price": "$316",
+    "image": "https://source.unsplash.com/300x300/?car%20seat"
+  },
+  {
+    "id": 39,
+    "name": "Dash Cam",
+    "category": "Automotive",
+    "price": "$241",
+    "image": "https://source.unsplash.com/300x300/?dash%20cam"
+  },
+  {
+    "id": 40,
+    "name": "Tire Inflator",
+    "category": "Automotive",
+    "price": "$299",
+    "image": "https://source.unsplash.com/300x300/?tire%20inflator"
+  },
+  {
+    "id": 41,
+    "name": "Honey",
+    "category": "Groceries",
+    "price": "$212",
+    "image": "https://source.unsplash.com/300x300/?honey"
+  },
+  {
+    "id": 42,
+    "name": "Pasta",
+    "category": "Groceries",
+    "price": "$388",
+    "image": "https://source.unsplash.com/300x300/?pasta"
+  },
+  {
+    "id": 43,
+    "name": "Olive Oil",
+    "category": "Groceries",
+    "price": "$495",
+    "image": "https://source.unsplash.com/300x300/?olive%20oil"
+  },
+  {
+    "id": 44,
+    "name": "Nuts",
+    "category": "Groceries",
+    "price": "$393",
+    "image": "https://source.unsplash.com/300x300/?nuts"
+  },
+  {
+    "id": 45,
+    "name": "Green Tea",
+    "category": "Groceries",
+    "price": "$49",
+    "image": "https://source.unsplash.com/300x300/?green%20tea"
+  },
+  {
+    "id": 46,
+    "name": "Dog Food",
+    "category": "Pet Supplies",
+    "price": "$364",
+    "image": "https://source.unsplash.com/300x300/?dog%20food"
+  },
+  {
+    "id": 47,
+    "name": "Cat Toy",
+    "category": "Pet Supplies",
+    "price": "$205",
+    "image": "https://source.unsplash.com/300x300/?cat%20toy"
+  },
+  {
+    "id": 48,
+    "name": "Pet Bed",
+    "category": "Pet Supplies",
+    "price": "$319",
+    "image": "https://source.unsplash.com/300x300/?pet%20bed"
+  },
+  {
+    "id": 49,
+    "name": "Leash",
+    "category": "Pet Supplies",
+    "price": "$217",
+    "image": "https://source.unsplash.com/300x300/?leash"
+  },
+  {
+    "id": 50,
+    "name": "Pet Shampoo",
+    "category": "Pet Supplies",
+    "price": "$275",
+    "image": "https://source.unsplash.com/300x300/?pet%20shampoo"
+  }
+]

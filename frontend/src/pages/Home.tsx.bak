@@ -1,0 +1,1431 @@
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Search } from '@mui/icons-material';
+import { CSSProperties } from 'react';
+
+interface Product {
+  id: string | number;
+  name: string;
+  price: string;
+  image: string;
+  category: string;
+  description?: string;
+  rating?: number;
+  countInStock?: number;
+}
+
+interface Styles {
+  [key: string]: CSSProperties;
+}
+
+const Home = () => {
+  // Navigation
+  const navigate = useNavigate();
+  
+  // State management
+  const [searchTerm, setSearchTerm] = useState('');
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  // Handle search form submission
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${searchTerm}`);
+    }
+  };
+
+  // Fetch featured products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/vmk_product_list_with_unsplash.json');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch products: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid data format: expected an array of products');
+        }
+        
+        // Transform and set products
+        const products: Product[] = data.slice(0, 8).map((product: any) => ({
+          id: product.id || Math.random().toString(36).substr(2, 9),
+          name: product.name || 'Unnamed Product',
+          price: product.price || '$0.00',
+          image: product.image || 'https://via.placeholder.com/300x200?text=No+Image',
+          category: product.category || 'Uncategorized',
+          description: product.description || `${product.name || 'Product'} - High quality product`,
+          rating: product.rating || Math.floor(Math.random() * 2) + 4,
+          countInStock: product.countInStock || 0
+        }));
+        
+        setFeaturedProducts(products);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div style={styles.loadingContainer}>
+        <div>Loading featured products...</div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div style={styles.errorContainer}>
+        <h2>Error Loading Products</h2>
+        <p>We couldn't load the featured products. Please try refreshing the page.</p>
+        <button 
+          onClick={() => window.location.reload()}
+          style={styles.retryButton}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${searchTerm}`);
+    }
+  };
+
+  // Fetch featured products from local JSON
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/vmk_product_list_with_unsplash.json');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch products: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid data format: expected an array of products');
+        }
+        
+        // Transform the data to match our Product interface
+        const products: Product[] = data.slice(0, 8).map((product: any) => ({
+          id: product.id || Math.random().toString(36).substr(2, 9),
+          ...defaultProductValues,
+          ...product
+        }));
+        
+        setFeaturedProducts(products);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div style={styles.loadingContainer}>
+        <div>Loading featured products...</div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div style={styles.errorContainer}>
+        <h2>Error Loading Products</h2>
+        <p>We couldn't load the featured products. Please try refreshing the page.</p>
+        <button 
+          onClick={() => window.location.reload()}
+          style={styles.retryButton}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // Main render
+  return (
+    <div style={styles.container}>
+      {/* Search Bar */}
+      <div style={styles.searchContainer}>
+        <form onSubmit={handleSearch} style={styles.searchForm}>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={styles.searchInput}
+          />
+          <button type="submit" style={styles.searchButton}>
+            <Search />
+          </button>
+        </form>
+      </div>
+
+      {/* Hero Section */}
+      <section style={styles.hero}>
+        <div style={styles.heroContent}>
+          <h1 style={styles.heroTitle}>Welcome to VMK Store</h1>
+          <p style={styles.heroSubtitle}>Discover amazing products at great prices</p>
+          <div style={styles.heroButtons}>
+            <Link to="/products" style={styles.primaryButton}>
+              Shop Now
+            </Link>
+            <Link to="/categories" style={styles.secondaryButton}>
+              Browse Categories
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section style={styles.section}>
+        <h2 style={styles.sectionTitle}>Featured Products</h2>
+        <div style={styles.productsGrid}>
+          {featuredProducts.length > 0 ? (
+            featuredProducts.map((product) => (
+              <div key={product.id} style={styles.productCard}>
+                <div style={styles.imageContainer}>
+                  <img 
+                    src={product.image}
+                    alt={product.name}
+                    style={styles.productImage}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+                    }}
+                  />
+                </div>
+                <div style={styles.productInfo}>
+                  <h3 style={styles.productName}>{product.name}</h3>
+                  <p style={styles.productPrice}>
+                    ${parseFloat(product.price.replace(/[^0-9.]/g, '')).toFixed(2)}
+                  </p>
+                  {product.rating && (
+                    <div style={styles.rating}>
+                      {'★'.repeat(Math.floor(product.rating))}
+                      {'☆'.repeat(5 - Math.floor(product.rating))}
+                      <span style={styles.ratingText}>({product.rating.toFixed(1)})</span>
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => navigate(`/product/${product.id}`)}
+                    style={styles.viewButton}
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={styles.noProducts}>
+              <p>No featured products available at the moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+// Styles
+const styles: Styles = {
+  container: {
+    minHeight: '100vh',
+    backgroundColor: '#f8f9fa',
+  },
+  searchContainer: {
+    backgroundColor: '#2c3e50',
+    padding: '1rem 0',
+  },
+  searchForm: {
+    display: 'flex',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 20px',
+  },
+  searchInput: {
+    flex: 1,
+    padding: '0.5rem 1rem',
+    border: '1px solid #ddd',
+    borderRadius: '4px 0 0 4px',
+    fontSize: '1rem',
+  },
+  searchButton: {
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    padding: '0 1rem',
+    borderRadius: '0 4px 4px 0',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50vh',
+    fontSize: '1.2rem',
+    color: '#666',
+  },
+  errorContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50vh',
+    padding: '20px',
+    textAlign: 'center',
+    color: '#d32f2f',
+  },
+  retryButton: {
+    marginTop: '20px',
+    padding: '10px 20px',
+    backgroundColor: '#3182ce',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  hero: {
+    background: 'linear-gradient(135deg, #3498db, #2c3e50)',
+    color: 'white',
+    padding: '4rem 20px',
+    textAlign: 'center',
+  },
+  heroContent: {
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  heroTitle: {
+    fontSize: '2.5rem',
+    marginBottom: '1rem',
+  },
+  heroSubtitle: {
+    fontSize: '1.2rem',
+    marginBottom: '2rem',
+    opacity: 0.9,
+  },
+  heroButtons: {
+    display: 'flex',
+    gap: '15px',
+    justifyContent: 'center',
+  },
+  primaryButton: {
+    backgroundColor: 'white',
+    color: '#2c3e50',
+    padding: '10px 25px',
+    borderRadius: '4px',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    transition: 'all 0.3s ease',
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    color: 'white',
+    padding: '10px 25px',
+    borderRadius: '4px',
+    textDecoration: 'none',
+    border: '1px solid white',
+    transition: 'all 0.3s ease',
+  },
+  section: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '40px 20px',
+  },
+  sectionTitle: {
+    textAlign: 'center',
+    marginBottom: '30px',
+    fontSize: '2rem',
+    color: '#2c3e50',
+    position: 'relative',
+    paddingBottom: '10px',
+  },
+  productsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+    gap: '30px',
+    padding: '0 10px',
+  },
+  productCard: {
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    backgroundColor: 'white',
+  },
+  imageContainer: {
+    width: '100%',
+    height: '200px',
+    overflow: 'hidden',
+    backgroundColor: '#f8f9fa',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  productImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    padding: '10px',
+  },
+  productInfo: {
+    padding: '15px',
+  },
+  productName: {
+    margin: '0 0 10px 0',
+    fontSize: '1.1rem',
+    color: '#2c3e50',
+    minHeight: '50px',
+  },
+  productPrice: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    color: '#e74c3c',
+    margin: '5px 0 15px 0',
+  },
+  rating: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '15px',
+    color: '#f39c12',
+  },
+  ratingText: {
+    marginLeft: '5px',
+    fontSize: '0.9rem',
+    color: '#7f8c8d',
+  },
+  viewButton: {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    transition: 'background-color 0.2s',
+  },
+  noProducts: {
+    gridColumn: '1 / -1',
+    textAlign: 'center',
+    padding: '40px',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '8px',
+  },
+};
+
+export default Home;
+        console.error('Error fetching products:', error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div style={styles.loadingContainer}>
+        <div>Loading featured products...</div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div style={styles.errorContainer}>
+        <h2>Error Loading Products</h2>
+        <p>We couldn't load the featured products. Please try refreshing the page.</p>
+        <button 
+          onClick={() => window.location.reload()}
+          style={styles.retryButton}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // Main render
+  return (
+    <div style={styles.container}>
+      {/* Search Bar */}
+      <div style={styles.searchContainer}>
+        <form onSubmit={handleSearch} style={styles.searchForm}>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={styles.searchInput}
+          />
+          <button type="submit" style={styles.searchButton}>
+            <Search />
+          </button>
+        </form>
+      </div>
+
+      {/* Hero Section */}
+      <section style={styles.hero}>
+        <div style={styles.heroContent}>
+          <h1 style={styles.heroTitle}>Welcome to VMK Store</h1>
+          <p style={styles.heroSubtitle}>Discover amazing products at great prices</p>
+          <div style={styles.heroButtons}>
+            <Link to="/products" style={styles.primaryButton}>
+              Shop Now
+            </Link>
+            <Link to="/categories" style={styles.secondaryButton}>
+              Browse Categories
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section style={styles.section}>
+        <h2 style={styles.sectionTitle}>Featured Products</h2>
+        <div style={styles.productsGrid}>
+          {featuredProducts.length > 0 ? (
+            featuredProducts.map((product) => (
+              <div key={product.id} style={styles.productCard}>
+                <div style={styles.imageContainer}>
+                  <img 
+                    src={product.image || 'https://via.placeholder.com/200'}
+                    alt={product.name}
+                    style={styles.productImage}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+                    }}
+                  />
+                </div>
+                <div style={styles.productInfo}>
+                  <h3 style={styles.productName}>{product.name}</h3>
+                  <p style={styles.productPrice}>
+                    ${parseFloat(product.price.replace(/[^0-9.]/g, '')).toFixed(2)}
+                  </p>
+                  {product.rating && (
+                    <div style={styles.rating}>
+                      {'★'.repeat(Math.floor(product.rating))}
+                      {'☆'.repeat(5 - Math.floor(product.rating))}
+                      <span style={styles.ratingText}>({product.rating.toFixed(1)})</span>
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => navigate(`/product/${product.id}`)}
+                    style={styles.viewButton}
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={styles.noProducts}>
+              <p>No featured products available at the moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+// Styles
+const styles: Styles = {
+  container: {
+    minHeight: '100vh',
+    backgroundColor: '#f8f9fa',
+  },
+  searchContainer: {
+    backgroundColor: '#2c3e50',
+    padding: '1rem 0',
+  },
+  searchForm: {
+    display: 'flex',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 20px',
+  },
+  searchInput: {
+    flex: 1,
+    padding: '0.5rem 1rem',
+    border: '1px solid #ddd',
+    borderRadius: '4px 0 0 4px',
+    fontSize: '1rem',
+  },
+  searchButton: {
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    padding: '0 1rem',
+    borderRadius: '0 4px 4px 0',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50vh',
+    fontSize: '1.2rem',
+    color: '#666',
+  },
+  errorContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50vh',
+    padding: '20px',
+    textAlign: 'center',
+    color: '#d32f2f',
+  },
+  retryButton: {
+    marginTop: '20px',
+    padding: '10px 20px',
+    backgroundColor: '#3182ce',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  hero: {
+    background: 'linear-gradient(135deg, #3498db, #2c3e50)',
+    color: 'white',
+    padding: '4rem 20px',
+    textAlign: 'center',
+  },
+  heroContent: {
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  heroTitle: {
+    fontSize: '2.5rem',
+    marginBottom: '1rem',
+  },
+  heroSubtitle: {
+    fontSize: '1.2rem',
+    marginBottom: '2rem',
+    opacity: 0.9,
+  },
+  heroButtons: {
+    display: 'flex',
+    gap: '15px',
+    justifyContent: 'center',
+  },
+  primaryButton: {
+    backgroundColor: 'white',
+    color: '#2c3e50',
+    padding: '10px 25px',
+    borderRadius: '4px',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    transition: 'all 0.3s ease',
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    color: 'white',
+    padding: '10px 25px',
+    borderRadius: '4px',
+    textDecoration: 'none',
+    border: '1px solid white',
+    transition: 'all 0.3s ease',
+  },
+  section: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '40px 20px',
+  },
+  sectionTitle: {
+    textAlign: 'center',
+    marginBottom: '30px',
+    fontSize: '2rem',
+    color: '#2c3e50',
+    position: 'relative',
+    paddingBottom: '10px',
+  },
+  productsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+    gap: '30px',
+    padding: '0 10px',
+  },
+  productCard: {
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    backgroundColor: 'white',
+  },
+  imageContainer: {
+    width: '100%',
+    height: '200px',
+    overflow: 'hidden',
+    backgroundColor: '#f8f9fa',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  productImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    padding: '10px',
+  },
+  productInfo: {
+    padding: '15px',
+  },
+  productName: {
+    margin: '0 0 10px 0',
+    fontSize: '1.1rem',
+    color: '#2c3e50',
+    minHeight: '50px',
+  },
+  productPrice: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    color: '#e74c3c',
+    margin: '5px 0 15px 0',
+  },
+  rating: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '15px',
+    color: '#f39c12',
+  },
+  ratingText: {
+    marginLeft: '5px',
+    fontSize: '0.9rem',
+    color: '#7f8c8d',
+  },
+  viewButton: {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    transition: 'background-color 0.2s',
+  },
+  noProducts: {
+    gridColumn: '1 / -1',
+    textAlign: 'center',
+    padding: '40px',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '8px',
+  },
+};
+          console.error('Expected an array of products but got:', typeof data);
+          throw new Error('Invalid data format: expected an array of products');
+        }
+        
+        // Transform the data to match our Product interface
+        const products: Product[] = data
+          .slice(0, 8) // Get first 8 products as featured
+          .map((product: any) => {
+            console.log('Processing product:', product);
+            return {
+              id: product.id,
+              name: product.name || 'Unnamed Product',
+              price: product.price || '$0.00',
+              image: product.image || 'https://via.placeholder.com/300x200?text=No+Image',
+              category: product.category || 'Uncategorized',
+              description: product.description || `${product.name || 'Product'} - High quality product`,
+              rating: Math.floor(Math.random() * 2) + 4 // Random rating 4-5
+            };
+          });
+        
+        console.log('Processed products:', products);
+        setFeaturedProducts(products);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error in fetchFeaturedProducts:', error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '50vh',
+        fontSize: '1.2rem',
+        color: '#666'
+      }}>
+        Loading featured products...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '50vh',
+        padding: '20px',
+        textAlign: 'center',
+        color: '#d32f2f'
+      }}>
+        <h2>Error Loading Products</h2>
+        <p>We couldn't load the featured products. Please try refreshing the page.</p>
+        <button 
+          onClick={() => window.location.reload()}
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            backgroundColor: '#3182ce',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="kilimall-store" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <header style={{
+        backgroundColor: '#2c3e50',
+        color: 'white',
+        padding: '1rem 0',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div className="logo" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+            <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>VMK Store</Link>
+          </div>
+          
+          <button 
+            className="mobile-menu-toggle" 
+            onClick={toggleMobileMenu}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'white',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              display: 'none'
+            }}
+          >
+            ☰
+          </button>
+
+          <nav style={{
+            display: 'flex',
+            gap: '20px',
+            alignItems: 'center'
+          }}>
+            <div className="search-bar" style={{ position: 'relative' }}>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch(e as any)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  border: '1px solid #ddd',
+                  width: '250px',
+                  fontSize: '0.9rem'
+                }}
+              />
+              <button 
+                onClick={handleSearch}
+                style={{
+                  position: 'absolute',
+                  right: '5px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#666'
+                }}
+              >
+                <Search />
+              </button>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+              <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
+              <Link to="/products" style={{ color: 'white', textDecoration: 'none' }}>Products</Link>
+              
+              {isAuthenticated ? (
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                  <Link to="/profile" style={{ color: 'white', textDecoration: 'none' }}>
+                    {user?.name?.split(' ')[0] || 'Profile'}
+                  </Link>
+                  <Link to="/orders" style={{ color: 'white', textDecoration: 'none' }}>Orders</Link>
+                  <Link to="/logout" style={{
+                    color: 'white',
+                    textDecoration: 'none',
+                    padding: '5px 10px',
+                    border: '1px solid white',
+                    borderRadius: '4px'
+                  }}>
+                    Logout
+                  </Link>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Link to="/login" style={{
+                    color: 'white',
+                    textDecoration: 'none',
+                    padding: '5px 10px',
+                    border: '1px solid white',
+                    borderRadius: '4px'
+                  }}>
+                    Login
+                  </Link>
+                  <Link to="/register" style={{
+                    backgroundColor: 'white',
+                    color: '#2c3e50',
+                    textDecoration: 'none',
+                    padding: '5px 10px',
+                    borderRadius: '4px',
+                    fontWeight: 'bold'
+                  }}>
+                    Register
+                  </Link>
+                </div>
+              )}
+              
+              <Link to="/cart" style={{
+                color: 'white',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                position: 'relative',
+                padding: '5px 10px',
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderRadius: '4px'
+              }}>
+                <ShoppingCart />
+                <span>Cart</span>
+                <span style={{
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '-5px',
+                  backgroundColor: '#e74c3c',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '18px',
+                  height: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.7rem',
+                  fontWeight: 'bold'
+                }}>0</span>
+              </Link>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main style={{ flex: 1 }}>
+        <section style={{
+          background: 'linear-gradient(135deg, #3498db, #2c3e50)',
+          color: 'white',
+          padding: '4rem 20px',
+          textAlign: 'center'
+        }}>
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Welcome to VMK Store</h1>
+            <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.9 }}>
+              Discover amazing products at great prices. Shop now for the best deals!
+            </p>
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+              <Link to="/products" style={{
+                backgroundColor: 'white',
+                color: '#2c3e50',
+                padding: '10px 25px',
+                borderRadius: '4px',
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease'
+              }}>
+                Shop Now
+              </Link>
+              <Link to="/categories" style={{
+                backgroundColor: 'transparent',
+                color: 'white',
+                padding: '10px 25px',
+                borderRadius: '4px',
+                textDecoration: 'none',
+                border: '1px solid white',
+                transition: 'all 0.3s ease'
+              }}>
+                Browse Categories
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}>
+          <h2 style={{ 
+            textAlign: 'center', 
+            marginBottom: '30px',
+            fontSize: '2rem',
+            color: '#2c3e50',
+            position: 'relative',
+            paddingBottom: '10px'
+          }}>
+            <span style={{
+              position: 'relative',
+              display: 'inline-block',
+              padding: '0 10px'
+            }}>
+              Featured Products
+              <span style={{
+                position: 'absolute',
+                bottom: '-5px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '50px',
+                height: '3px',
+                backgroundColor: '#3498db',
+                borderRadius: '3px'
+              }}></span>
+            </span>
+          </h2>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+            gap: '30px',
+            padding: '0 10px'
+          }}>
+            {featuredProducts.length > 0 ? (
+              featuredProducts.map((product) => (
+                <div key={product.id} style={{
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  ':hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+                  },
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                  backgroundColor: 'white'
+                }}>
+                  <div style={{
+                    width: '100%',
+                    height: '200px',
+                    overflow: 'hidden',
+                    backgroundColor: '#f8f9fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <img 
+                      src={product.image || 'https://via.placeholder.com/200'}
+                      alt={product.name}
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        padding: '10px'
+                      }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+                      }}
+                    />
+                  </div>
+                  <div style={{ 
+                    padding: '15px',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
+                    <h3 style={{
+                      margin: '0 0 10px 0',
+                      fontSize: '1.1rem',
+                      color: '#2c3e50',
+                      minHeight: '50px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      {product.name}
+                    </h3>
+                    <p style={{
+                      fontSize: '1.25rem',
+                      fontWeight: 'bold',
+                      color: '#e74c3c',
+                      margin: '5px 0 15px 0'
+                    }}>
+                      ${parseFloat(product.price.replace(/[^0-9.]/g, '')).toFixed(2)}
+                    </p>
+                    {product.rating && (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginBottom: '15px',
+                        color: '#f39c12'
+                      }}>
+                        {'★'.repeat(Math.floor(product.rating))}
+                        {'☆'.repeat(5 - Math.floor(product.rating))}
+                        <span style={{
+                          marginLeft: '5px',
+                          fontSize: '0.9rem',
+                          color: '#7f8c8d'
+                        }}>
+                          ({product.rating.toFixed(1)})
+                        </span>
+                      </div>
+                    )}
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/product/${product.id}`);
+                      }}
+                      style={{
+                        marginTop: 'auto',
+                        padding: '10px',
+                        backgroundColor: '#3498db',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        transition: 'background-color 0.2s',
+                        ':hover': {
+                          backgroundColor: '#2980b9'
+                        }
+                      }}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ 
+                gridColumn: '1 / -1', 
+                textAlign: 'center', 
+                padding: '40px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px'
+              }}>
+                <p style={{ fontSize: '1.1rem', color: '#7f8c8d' }}>
+                  No featured products available at the moment. Please check back later.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <footer style={{
+        backgroundColor: '#2c3e50',
+        color: 'white',
+        padding: '40px 20px 20px',
+        marginTop: '60px'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '30px',
+          marginBottom: '30px'
+        }}>
+          <div>
+            <h3 style={{
+              fontSize: '1.2rem',
+              marginBottom: '20px',
+              position: 'relative',
+              paddingBottom: '10px'
+            }}>
+              <span style={{
+                position: 'relative',
+                '::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-5px',
+                  left: 0,
+                  width: '40px',
+                  height: '2px',
+                  backgroundColor: '#3498db'
+                }
+              }}>
+                About Us
+              </span>
+            </h3>
+            <p style={{ lineHeight: '1.6', color: '#bdc3c7' }}>
+              VMK Store is your one-stop shop for quality products at affordable prices. 
+              We're committed to providing the best shopping experience.
+            </p>
+          </div>
+          
+          <div>
+            <h3 style={{
+              fontSize: '1.2rem',
+              marginBottom: '20px',
+              position: 'relative',
+              paddingBottom: '10px'
+            }}>
+              <span style={{
+                position: 'relative',
+                '::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-5px',
+                  left: 0,
+                  width: '40px',
+                  height: '2px',
+                  backgroundColor: '#3498db'
+                }
+              }}>
+                Quick Links
+              </span>
+            </h3>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              <li style={{ marginBottom: '8px' }}>
+                <Link to="/about" style={{
+                  color: '#bdc3c7',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s',
+                  ':hover': { color: 'white' }
+                }}>About Us</Link>
+              </li>
+              <li style={{ marginBottom: '8px' }}>
+                <Link to="/contact" style={{
+                  color: '#bdc3c7',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s',
+                  ':hover': { color: 'white' }
+                }}>Contact Us</Link>
+              </li>
+              <li style={{ marginBottom: '8px' }}>
+                <Link to="/privacy" style={{
+                  color: '#bdc3c7',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s',
+                  ':hover': { color: 'white' }
+                }}>Privacy Policy</Link>
+              </li>
+              <li>
+                <Link to="/terms" style={{
+                  color: '#bdc3c7',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s',
+                  ':hover': { color: 'white' }
+                }}>Terms & Conditions</Link>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 style={{
+              fontSize: '1.2rem',
+              marginBottom: '20px',
+              position: 'relative',
+              paddingBottom: '10px'
+            }}>
+              <span style={{
+                position: 'relative',
+                '::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-5px',
+                  left: 0,
+                  width: '40px',
+                  height: '2px',
+                  backgroundColor: '#3498db'
+                }
+              }}>
+                Contact Us
+              </span>
+            </h3>
+            <address style={{ fontStyle: 'normal', color: '#bdc3c7', lineHeight: '1.6' }}>
+              <p style={{ margin: '0 0 10px 0' }}>
+    </div>
+    
+    <div>
+      <h3 style={{
+        fontSize: '1.2rem',
+        marginBottom: '20px',
+        position: 'relative',
+        paddingBottom: '10px'
+      }}>
+        <span style={{
+          position: 'relative',
+          '::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: '-5px',
+            left: 0,
+            width: '40px',
+            height: '2px',
+            backgroundColor: '#3498db'
+          }
+        }}>
+          Quick Links
+        </span>
+      </h3>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        <li style={{ marginBottom: '8px' }}>
+          <Link to="/about" style={{
+            color: '#bdc3c7',
+            textDecoration: 'none',
+            transition: 'color 0.2s',
+            ':hover': { color: 'white' }
+          }}>About Us</Link>
+        </li>
+        <li style={{ marginBottom: '8px' }}>
+          <Link to="/contact" style={{
+            color: '#bdc3c7',
+            textDecoration: 'none',
+            transition: 'color 0.2s',
+            ':hover': { color: 'white' }
+          }}>Contact Us</Link>
+        </li>
+        <li style={{ marginBottom: '8px' }}>
+          <Link to="/privacy" style={{
+            color: '#bdc3c7',
+            textDecoration: 'none',
+            transition: 'color 0.2s',
+            ':hover': { color: 'white' }
+          }}>Privacy Policy</Link>
+        </li>
+        <li>
+          <Link to="/terms" style={{
+            color: '#bdc3c7',
+            textDecoration: 'none',
+            transition: 'color 0.2s',
+            ':hover': { color: 'white' }
+          }}>Terms & Conditions</Link>
+        </li>
+      </ul>
+    </div>
+    
+    <div>
+      <h3 style={{
+        fontSize: '1.2rem',
+        marginBottom: '20px',
+        position: 'relative',
+        paddingBottom: '10px'
+      }}>
+        <span style={{
+          position: 'relative',
+          '::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: '-5px',
+            left: 0,
+            width: '40px',
+            height: '2px',
+            backgroundColor: '#3498db'
+          }
+        }}>
+          Contact Us
+        </span>
+      </h3>
+      <address style={{ fontStyle: 'normal', color: '#bdc3c7', lineHeight: '1.6' }}>
+        <p style={{ margin: '0 0 10px 0' }}>
+          <strong>Email:</strong> info@vmkstore.com
+        </p>
+        <p style={{ margin: '0 0 10px 0' }}>
+          <strong>Phone:</strong> +1 (555) 123-4567
+        </p>
+        <p style={{ margin: '0 0 15px 0' }}>
+          <strong>Address:</strong> 123 Store St, City, Country
+        </p>
+        <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
+          <a href="#" aria-label="Twitter" style={{ color: '#bdc3c7', textDecoration: 'none' }}>Twitter</a>
+          <a href="#" aria-label="Instagram" style={{ color: '#bdc3c7', textDecoration: 'none' }}>Instagram</a>
+          <a href="#" aria-label="Facebook" style={{ color: '#bdc3c7', textDecoration: 'none' }}>Facebook</a>
+        </div>
+      </address>
+    </div>
+  </div>
+  
+  <div style={{
+    borderTop: '1px solid rgba(255,255,255,0.1)',
+    paddingTop: '20px',
+    textAlign: 'center',
+    color: '#bdc3c7',
+    fontSize: '0.9rem',
+    width: '100%',
+    gridColumn: '1 / -1'
+  }}>
+    <p style={{ margin: 0 }}>&copy; {new Date().getFullYear()} VMK Store. All rights reserved.</p>
+  </div>
+</footer>
+</div>
+);
+};
+
+export default Home;
