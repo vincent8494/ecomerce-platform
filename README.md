@@ -1,6 +1,5 @@
 # Fetty E-commerce Platform
 
-![Fetty E-commerce Platform](https://via.placeholder.com/1200x600?text=Fetty+E-commerce+Platform)
 
 A full-stack e-commerce platform built with modern web technologies to provide a seamless shopping experience.
 
