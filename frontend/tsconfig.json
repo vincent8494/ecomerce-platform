@@ -4,7 +4,7 @@
     "target": "ES2020",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
@@ -20,13 +20,28 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["node"],
+    "types": ["node", "vite/client"],
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
-    ]
+    ],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true
   },
-  "include": ["src", "src/env.d.ts", "src/types/react-router.d.ts"],
+  "include": [
+    "src",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/env.d.ts",
+    "src/types/**/*.d.ts"
+  ],
   "exclude": ["node_modules"],
   "references": [
     { "path": "./tsconfig.node.json" }
