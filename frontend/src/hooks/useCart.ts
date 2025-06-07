@@ -1,23 +1,22 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { setCartItems, getCartItems } from '../utils/storage';
+import { CartItem, Product } from '../types/hooks';
 
-export interface CartItem {
-  product: {
-    _id: string;
-    name: string;
-    price: number;
-    images: string[];
-    stock: number;
-  };
-  quantity: number;
+interface UseCartReturn {
+  cartItems: CartItem[];
+  addToCart: (product: Product) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
+  getCartTotal: () => number;
+  getCartCount: () => number;
 }
 
-export const useCart = () => {
-  const { t } = useTranslation();
+export const useCart = (): UseCartReturn => {
   const [cartItems, setCartItemsState] = useState<CartItem[]>(getCartItems() || []);
 
-  const addToCart = useCallback((product: any) => {
+  const addToCart = useCallback((product: Product) => {
     try {
       const existingItem = cartItems.find(item => item.product._id === product._id);
       
@@ -40,9 +39,9 @@ export const useCart = () => {
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      throw new Error(t('common.error_adding_to_cart' as any));
+      throw new Error('Failed to add item to cart');
     }
-  }, [cartItems, t]);
+  }, [cartItems]);
 
   const removeFromCart = useCallback((productId: string) => {
     try {
@@ -51,24 +50,27 @@ export const useCart = () => {
       setCartItems(updatedItems);
     } catch (error) {
       console.error('Error removing from cart:', error);
-      throw new Error(t('common.error_removing_from_cart' as any));
+      throw new Error('Failed to remove item from cart');
     }
-  }, [cartItems, t]);
+  }, [cartItems]);
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
+    if (quantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
+    
     try {
       const updatedItems = cartItems.map(item => 
-        item.product._id === productId 
-          ? { ...item, quantity } 
-          : item
+        item.product._id === productId ? { ...item, quantity } : item
       );
       setCartItemsState(updatedItems);
       setCartItems(updatedItems);
     } catch (error) {
-      console.error('Error updating quantity:', error);
-      throw new Error(t('common.error_updating_quantity' as any));
+      console.error('Error updating cart item quantity:', error);
+      throw new Error('Failed to update cart');
     }
-  }, [cartItems, t]);
+  }, [cartItems, removeFromCart]);
 
   const clearCart = useCallback(() => {
     try {
@@ -76,9 +78,9 @@ export const useCart = () => {
       setCartItems([]);
     } catch (error) {
       console.error('Error clearing cart:', error);
-      throw new Error(t('common.error_clearing_cart' as any));
+      throw new Error('Failed to clear cart');
     }
-  }, [t]);
+  }, []);
 
   return {
     cartItems,
@@ -86,5 +88,7 @@ export const useCart = () => {
     removeFromCart,
     updateQuantity,
     clearCart,
-  };
+    getCartTotal: () => cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0),
+    getCartCount: () => cartItems.reduce((count, item) => count + item.quantity, 0),
+  } as const;
 };

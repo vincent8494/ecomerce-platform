@@ -21,6 +21,8 @@ import Register from '../pages/Register';
 import Profile from '../pages/Profile';
 import Orders from '../pages/Orders';
 import AdminDashboard from '../pages/AdminDashboard';
+import Quicklinks from '../pages/Quicklinks';
+import CustomerService from '../pages/CustomerService';
 import NotFound from '../pages/NotFound';
 
 // Components
@@ -37,6 +39,8 @@ const AppRouter = () => {
         {/* Public Routes */}
         <Route exact path="/" component={Home} />
         <Route path="/about" component={About} />
+        <Route path="/quicklinks" component={Quicklinks} />
+        <Route path="/customer-service" component={CustomerService} />
         <Route path="/contact" component={Contact} />
         <Route path="/shipping" component={ShippingPolicy} />
         <Route path="/returns" component={ReturnsExchanges} />
@@ -61,7 +65,7 @@ const AppRouter = () => {
         <AdminRoute path="/admin/dashboard" component={AdminDashboard} />
 
         {/* 404 - Keep this at the bottom */}
-        <Route path="*" component={NotFound} />
+        <Route component={NotFound} />
       </Switch>
       <Footer />
     </Router>
