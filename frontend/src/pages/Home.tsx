@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Search } from '@mui/icons-material';
 import type { CSSProperties } from 'react';
-import { handleImageError, getFallbackImage } from '../utils/imageUtils';
+import { getFallbackImage } from '../utils/imageUtils';
+import '../styles/productCard.css';
 
 interface Product {
   id: string | number;
   name: string;
   price: string;
+  originalPrice?: string;
   image: string;
   category: string;
   description?: string;
@@ -20,17 +22,14 @@ type CSSObject = CSSProperties & {
 };
 
 const Home = () => {
-  // Navigation
   const history = useHistory();
   
   // State management
   const [searchTerm, setSearchTerm] = useState('');
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isSearchHovered, setIsSearchHovered] = useState(false);
-  const [hoveredProduct, setHoveredProduct] = useState<string | number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  // Removed unused state to fix TypeScript warning
 
   // Handle search form submission
   const handleSearch = (e: React.FormEvent) => {
@@ -40,7 +39,7 @@ const Home = () => {
     }
   };
 
-  // Fetch featured products
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -52,161 +51,121 @@ const Home = () => {
         
         const data = await response.json();
         
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid data format: expected an array of products');
-        }
-        
-        // Transform and set products
-        const products: Product[] = data.slice(0, 8).map((product: any) => ({
-          id: product.id || Math.random().toString(36).substr(2, 9),
-          name: product.name || 'Unnamed Product',
-          price: product.price || '$0.00',
-          image: product.image || getFallbackImage(300, 200, 'No Image'),
-          category: product.category || 'Uncategorized',
-          description: product.description || `${product.name || 'Product'} - High quality product`,
-          rating: product.rating || Math.floor(Math.random() * 2) + 4,
-          countInStock: product.countInStock || 0
+        // Transform the data to match our Product interface
+        const formattedProducts: Product[] = data.map((item: any) => ({
+          id: item.id || Math.random().toString(36).substr(2, 9),
+          name: item.name || 'Unnamed Product',
+          price: item.price || '$0.00',
+          originalPrice: item.originalPrice,
+          image: item.image || getFallbackImage({
+            width: 300,
+            height: 300,
+            text: 'No Image',
+            bgColor: '#f8f9fa',
+            textColor: '6c757d',
+            tilePattern: true
+          }),
+          category: item.category || 'Uncategorized',
+          description: item.description || `${item.name || 'Product'} - High quality product`,
+          rating: item.rating || Math.floor(Math.random() * 2) + 4,
+          countInStock: item.countInStock ?? 10
         }));
         
-        setFeaturedProducts(products);
+        setProducts(formattedProducts);
         setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setIsError(true);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
         setIsLoading(false);
       }
     };
-
+    
     fetchProducts();
   }, []);
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div style={styles.loadingContainer}>
-        <div>Loading featured products...</div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (isError) {
-    return (
-      <div style={styles.errorContainer}>
-        <h2>Error Loading Products</h2>
-        <p>We couldn't load the featured products. Please try refreshing the page.</p>
-        <button 
-          onClick={() => window.location.reload()}
-          style={styles.retryButton}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div style={styles.container}>
-      {/* Search Bar */}
-      <div style={styles.searchContainer}>
-        <form onSubmit={handleSearch} style={styles.searchForm}>
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-            onMouseEnter={() => setIsSearchHovered(true)}
-            onMouseLeave={() => setIsSearchHovered(false)}
-            style={{
-              ...styles.searchInput,
-              ...(isSearchFocused ? styles.searchInputFocus : {}),
-            }}
-          />
-          <button 
-            type="submit" 
-            style={{
-              ...styles.searchButton,
-              ...(isSearchHovered ? styles.searchButtonHover : {})
-            }}
-            onMouseEnter={() => setIsSearchHovered(true)}
-            onMouseLeave={() => setIsSearchHovered(false)}
-          >
-            <Search />
-          </button>
-        </form>
-      </div>
-
-      {/* Hero Section */}
-      <section style={styles.hero}>
-        <div style={styles.heroContent}>
-          <h1 style={styles.heroTitle}>Welcome to VMK Store</h1>
-          <p style={styles.heroSubtitle}>Discover amazing products at great prices</p>
-          <div style={styles.heroButtons}>
-            <Link to="/products" style={styles.primaryButton}>
-              Shop Now
-            </Link>
-            <Link to="/categories" style={styles.secondaryButton}>
-              Browse Categories
-            </Link>
-          </div>
+      {/* Search Section */}
+      <section style={styles.searchSection}>
+        <div style={styles.searchContainer}>
+          <h1 style={styles.heroTitle}>Find Your Perfect Product</h1>
+          <form onSubmit={handleSearch} style={styles.searchForm}>
+            <div style={styles.searchInputContainer}>
+              <Search style={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Search for products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                // Removed focus/blur handlers as they were using removed state
+                style={styles.searchInput}
+              />
+            </div>
+            <button type="submit" style={styles.searchButton}>
+              Search
+            </button>
+          </form>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>Featured Products</h2>
-        <div style={styles.productsGrid}>
-          {featuredProducts.length > 0 ? (
-            featuredProducts.map((product) => (
-              <div 
-                key={product.id} 
-                style={{
-                  ...styles.productCard,
-                  ...(hoveredProduct === product.id ? styles.productCardHover : {})
-                }}
-                onMouseEnter={() => setHoveredProduct(product.id)}
-                onMouseLeave={() => setHoveredProduct(null)}
-              >
-                <div style={styles.imageContainer}>
+      {/* Products Grid */}
+      <section style={styles.productsSection}>
+        <h2 style={styles.sectionTitle}>Our Products</h2>
+        {isLoading ? (
+          <div style={styles.loading}>Loading products...</div>
+        ) : error ? (
+          <div style={styles.error}>{error}</div>
+        ) : (
+          <div style={styles.productsGrid}>
+            {products.map((product) => (
+              <div key={product.id} className="product-card">
+                <div className="product-image-container">
                   <img 
                     src={product.image}
                     alt={product.name}
-                    style={{
-                      ...styles.productImage,
-                      transform: hoveredProduct === product.id ? 'scale(1.05)' : 'scale(1)'
+                    className="product-image"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = getFallbackImage({
+                        width: 300,
+                        height: 300,
+                        text: 'Image Not Available',
+                        bgColor: '#f8f9fa',
+                        textColor: '6c757d',
+                        tilePattern: true
+                      });
                     }}
-                    onError={handleImageError}
                   />
                 </div>
-                <div style={styles.productInfo}>
-                  <h3 style={styles.productName}>{product.name}</h3>
-                  <p style={styles.productPrice}>
+                <div className="product-info">
+                  <h3 className="product-title">{product.name}</h3>
+                  <div className="product-price">
                     {product.price.startsWith('$') ? product.price : `$${product.price}`}
-                  </p>
+                    {product.originalPrice && (
+                      <span className="original-price">{product.originalPrice}</span>
+                    )}
+                  </div>
                   {product.rating && (
-                    <div style={styles.rating}>
-                      {'★'.repeat(Math.floor(product.rating))}
-                      {'☆'.repeat(5 - Math.floor(product.rating))}
-                      <span style={styles.ratingText}>({product.rating.toFixed(1)})</span>
+                    <div className="rating">
+                      {Array(5).fill(0).map((_, i) => (
+                        <span key={i} style={i < product.rating! ? styles.starFilled : styles.starEmpty}>
+                          ★
+                        </span>
+                      ))}
                     </div>
                   )}
-                  <button 
-                    onClick={() => history.push(`/product/${product.id}`)}
-                    style={styles.viewButton}
-                  >
-                    View Details
-                  </button>
+                  <div className="product-actions">
+                    <button className="add-to-cart-btn">Add to Cart</button>
+                    <button className="wishlist-btn" aria-label="Add to wishlist">
+                      ♡
+                    </button>
+                  </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <div style={styles.noProducts}>
-              <p>No featured products available at the moment.</p>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
@@ -216,177 +175,182 @@ const Home = () => {
 const styles: Record<string, CSSObject> = {
   // Layout
   container: {
+    maxWidth: '1400px',
+    margin: '0 auto',
+    padding: '0 20px',
     minHeight: '100vh',
-    backgroundColor: '#f8f9fa',
     fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
     lineHeight: 1.6,
     color: '#333',
   },
   
-  // Search bar
-  searchContainer: {
-    backgroundColor: '#2c3e50',
-    padding: '1rem 0',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-  },
-  searchForm: {
-    display: 'flex',
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '0 20px',
-    position: 'relative',
-  },
-  searchInput: {
-    flex: 1,
-    padding: '0.8rem 1.2rem',
-    border: 'none',
-    borderRadius: '30px',
-    fontSize: '1rem',
-    outline: 'none',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    transition: 'all 0.3s ease',
-  },
-  searchInputFocus: {
-    boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
-    transform: 'translateY(-1px)',
-  },
-  searchButton: {
-    position: 'absolute',
-    right: '25px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    backgroundColor: 'transparent',
-    color: '#2c3e50',
-    border: 'none',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0.5rem',
-    borderRadius: '50%',
-    transition: 'all 0.3s ease',
-  },
-  searchButtonHover: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
+  // Search Section
+  searchSection: {
+    backgroundColor: '#f8f9fa',
+    padding: '60px 0',
+    marginBottom: '40px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
   },
   
-  // Loading and error states
-  loadingContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50vh',
-    fontSize: '1.2rem',
-    color: '#666',
-  },
-  errorContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50vh',
-    padding: '20px',
+  searchContainer: {
+    maxWidth: '800px',
+    margin: '0 auto',
     textAlign: 'center',
-    color: '#d32f2f',
+    padding: '0 20px',
   },
-  retryButton: {
-    marginTop: '20px',
-    padding: '10px 20px',
-    backgroundColor: '#3182ce',
+  
+  heroTitle: {
+    fontSize: '2.5rem',
+    fontWeight: 700,
+    color: '#2c3e50',
+    marginBottom: '20px',
+    lineHeight: 1.2,
+  },
+  
+  searchForm: {
+    display: 'flex',
+    gap: '10px',
+    maxWidth: '600px',
+    margin: '0 auto',
+  },
+  
+  searchInputContainer: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    padding: '0 15px',
+    transition: 'border-color 0.3s ease',
+  },
+  
+  searchIcon: {
+    color: '#95a5a6',
+    marginRight: '10px',
+  },
+  
+  searchInput: {
+    flex: 1,
+    border: 'none',
+    outline: 'none',
+    padding: '12px 0',
+    fontSize: '1rem',
+    backgroundColor: 'transparent',
+    '&::placeholder': {
+      color: '#95a5a6',
+    }
+  } as unknown as CSSObject,
+  
+  searchButton: {
+    backgroundColor: '#3498db',
     color: 'white',
     border: 'none',
     borderRadius: '4px',
+    padding: '0 24px',
+    fontSize: '1rem',
+    fontWeight: 500,
     cursor: 'pointer',
+    transition: 'background-color 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#2980b9',
+    }
+  } as unknown as CSSObject,
+  
+  // Products Section
+  productsSection: {
+    padding: '40px 0',
   },
   
-  // Hero section
-  hero: {
-    background: 'linear-gradient(135deg, #3498db, #2c3e50)',
-    color: 'white',
-    padding: '6rem 20px',
-    textAlign: 'center',
+  sectionTitle: {
+    fontSize: '1.8rem',
+    fontWeight: 600,
+    color: '#2c3e50',
+    marginBottom: '30px',
     position: 'relative',
-    overflow: 'hidden',
-    '&::before': {
+    display: 'inline-block',
+    '&::after': {
       content: '""',
       position: 'absolute',
-      top: 0,
+      bottom: '-10px',
       left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.3)',
-      zIndex: 1,
-      borderRadius: '8px',
-    },
+      width: '60px',
+      height: '4px',
+      backgroundColor: '#3498db',
+      borderRadius: '2px',
+    } as CSSProperties,
   },
-
-  // ... rest of the styles remain the same ...
-
-  primaryButton: {
-    backgroundColor: 'white',
-    color: '#2c3e50',
-    padding: '12px 30px',
-    borderRadius: '30px',
-    textDecoration: 'none',
-    fontWeight: 600,
-    transition: 'all 0.3s ease',
-    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-    '&:hover': {
-      transform: 'translateY(-5px)',
-      boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
-    },
-  },
-
-  // ... rest of the styles remain the same ...
-
-  '@keyframes fadeInUp': {
-    from: {
-      opacity: 0,
-      transform: 'translateY(20px)',
-    },
-    to: {
-      opacity: 1,
-      transform: 'translateY(0)',
-    },
-  },
-
-  // ... rest of the styles remain the same ...
-
+  
   productsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '40px 30px',
-    padding: '0 10px',
-    width: '100%',
-    boxSizing: 'border-box',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-      gap: '30px 20px',
-    },
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: '1fr',
-      gap: '30px',
-      padding: '0',
-    },
+    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+    gap: '24px',
+    padding: '24px 0',
   },
-
-  // ... rest of the styles remain the same ...
-
-  noProducts: {
-    gridColumn: '1 / -1',
+  
+  // Loading and Error States
+  loading: {
     textAlign: 'center',
-    padding: '60px 40px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '12px',
-    margin: '10px 0',
-    '@media (max-width: 768px)': {
-      flexDirection: 'column',
-      padding: '40px 20px',
-    }
+    padding: '40px 0',
+    fontSize: '1.1rem',
+    color: '#7f8c8d',
   },
+  
+  error: {
+    textAlign: 'center',
+    padding: '40px 0',
+    color: '#e74c3c',
+    fontSize: '1.1rem',
+  },
+  
+  // Star Rating
+  starFilled: {
+    color: '#f1c40f',
+    fontSize: '1rem',
+  },
+  
+  starEmpty: {
+    color: '#ddd',
+    fontSize: '1rem',
+  },
+  
+  // Responsive Adjustments
+  '@media (max-width: 768px)': {
+    heroTitle: {
+      fontSize: '2rem',
+    },
+    searchForm: {
+      flexDirection: 'column',
+      gap: '10px',
+    },
+    searchInputContainer: {
+      width: '100%',
+    },
+    searchButton: {
+      width: '100%',
+      padding: '12px 0',
+    },
+    productsGrid: {
+      gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+      gap: '16px',
+    },
+  } as unknown as CSSObject,
+  
+  '@media (max-width: 480px)': {
+    container: {
+      padding: '0 10px',
+    },
+    heroTitle: {
+      fontSize: '1.75rem',
+    },
+    sectionTitle: {
+      fontSize: '1.5rem',
+    },
+    productsGrid: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+  } as unknown as CSSObject,
 };
 
 export default Home;

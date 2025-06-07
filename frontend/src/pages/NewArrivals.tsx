@@ -111,7 +111,14 @@ const NewArrivals = () => {
           id: product.id || Math.random().toString(36).substr(2, 9),
           name: product.name || 'Unnamed Product',
           price: product.price || '$0.00',
-          image: product.image || getFallbackImage(300, 200, 'No Image'),
+          image: product.image || getFallbackImage({
+            width: 300,
+            height: 200,
+            text: 'No Image',
+            bgColor: '#f8f9fa',
+            textColor: '6c757d',
+            tilePattern: true
+          }),
           category: product.category || 'Uncategorized'
         }));
         

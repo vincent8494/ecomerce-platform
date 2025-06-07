@@ -389,7 +389,14 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ initialSearchTerm = '' 
           name: item.name || 'Unnamed Product',
           price: item.price || '$0.00',
           category: item.category || 'Uncategorized',
-          image: item.image || getFallbackImage(300, 200, 'No Image'),
+          image: item.image || getFallbackImage({
+            width: 300,
+            height: 200,
+            text: 'No Image',
+            bgColor: '#f8f9fa',
+            textColor: '6c757d',
+            tilePattern: true
+          }),
           description: item.description || `A high-quality ${item.name || 'product'}.`,
           rating: Math.floor(Math.random() * 3) + 3, // Random rating 3-5
           originalPrice: item.originalPrice || ''
@@ -637,10 +644,24 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ initialSearchTerm = '' 
             {currentProducts.map((product) => (
               <ProductCard key={product.id} role="article" aria-label={`Product: ${product.name}`}>
                 <ProductImage 
-                  src={product.image || getFallbackImage(300, 200, 'No Image')}
+                  src={product.image || getFallbackImage({
+                    width: 300,
+                    height: 200,
+                    text: 'No Image',
+                    bgColor: '#f8f9fa',
+                    textColor: '6c757d',
+                    tilePattern: true
+                  })}
                   alt={product.name}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = getFallbackImage(300, 200, 'Image Not Available');
+                    (e.target as HTMLImageElement).src = getFallbackImage({
+                      width: 300,
+                      height: 200,
+                      text: 'Image Not Available',
+                      bgColor: '#f8f9fa',
+                      textColor: '6c757d',
+                      tilePattern: true
+                    });
                   }}
                 />
                 <ProductInfo>

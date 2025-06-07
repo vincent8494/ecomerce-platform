@@ -155,7 +155,14 @@ const SaleItems = () => {
             price: `$${salePrice}`,
             originalPrice: `$${originalPrice.toFixed(2)}`,
             discount,
-            image: product.image || getFallbackImage(300, 200, 'No Image'),
+            image: product.image || getFallbackImage({
+              width: 300,
+              height: 200,
+              text: 'No Image',
+              bgColor: '#f8f9fa',
+              textColor: '6c757d',
+              tilePattern: true
+            }),
             category: product.category || 'Uncategorized'
           };
         });

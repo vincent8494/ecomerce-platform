@@ -46,7 +46,14 @@ const ProductDetails = () => {
             ...foundProduct,
             id: String(foundProduct.id), // Ensure ID is a string
             description: foundProduct.description || `${foundProduct.name} - High quality product`,
-            image: foundProduct.image || getFallbackImage(500, 500, 'No Image'),
+            image: foundProduct.image || getFallbackImage({
+              width: 500,
+              height: 500,
+              text: 'No Image',
+              bgColor: '#f8f9fa',
+              textColor: '6c757d',
+              tilePattern: true
+            }),
             category: foundProduct.category || 'Uncategorized',
             rating: foundProduct.rating || Math.floor(Math.random() * 2) + 4,
             countInStock: foundProduct.countInStock ?? 10 // Default stock value if undefined
