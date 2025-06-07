@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { getFallbackImage } from '../utils/imageUtils';
 
 interface Product {
   id: string | number;
@@ -110,7 +111,7 @@ const NewArrivals = () => {
           id: product.id || Math.random().toString(36).substr(2, 9),
           name: product.name || 'Unnamed Product',
           price: product.price || '$0.00',
-          image: product.image || 'https://via.placeholder.com/300x200?text=No+Image',
+          image: product.image || getFallbackImage(300, 200, 'No Image'),
           category: product.category || 'Uncategorized'
         }));
         

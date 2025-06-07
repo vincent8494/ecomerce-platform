@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { getFallbackImage } from '../utils/imageUtils';
 
 interface Product {
   id: string | number;
@@ -154,7 +155,7 @@ const SaleItems = () => {
             price: `$${salePrice}`,
             originalPrice: `$${originalPrice.toFixed(2)}`,
             discount,
-            image: product.image || 'https://via.placeholder.com/300x200?text=No+Image',
+            image: product.image || getFallbackImage(300, 200, 'No Image'),
             category: product.category || 'Uncategorized'
           };
         });

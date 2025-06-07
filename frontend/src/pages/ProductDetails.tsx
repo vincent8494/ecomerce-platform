@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
+import { getFallbackImage } from '../utils/imageUtils';
 
 import type { CartItem } from '../types/cart';
 
@@ -45,7 +46,7 @@ const ProductDetails = () => {
             ...foundProduct,
             id: String(foundProduct.id), // Ensure ID is a string
             description: foundProduct.description || `${foundProduct.name} - High quality product`,
-            image: foundProduct.image || 'https://via.placeholder.com/500x500?text=No+Image',
+            image: foundProduct.image || getFallbackImage(500, 500, 'No Image'),
             category: foundProduct.category || 'Uncategorized',
             rating: foundProduct.rating || Math.floor(Math.random() * 2) + 4,
             countInStock: foundProduct.countInStock ?? 10 // Default stock value if undefined

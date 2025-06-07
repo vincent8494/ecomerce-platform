@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { getFallbackImage } from '../../utils/imageUtils';
 
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'rating-desc';
 
@@ -388,7 +389,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ initialSearchTerm = '' 
           name: item.name || 'Unnamed Product',
           price: item.price || '$0.00',
           category: item.category || 'Uncategorized',
-          image: item.image || 'https://via.placeholder.com/300x200?text=No+Image',
+          image: item.image || getFallbackImage(300, 200, 'No Image'),
           description: item.description || `A high-quality ${item.name || 'product'}.`,
           rating: Math.floor(Math.random() * 3) + 3, // Random rating 3-5
           originalPrice: item.originalPrice || ''
@@ -636,10 +637,10 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ initialSearchTerm = '' 
             {currentProducts.map((product) => (
               <ProductCard key={product.id} role="article" aria-label={`Product: ${product.name}`}>
                 <ProductImage 
-                  src={product.image || 'https://via.placeholder.com/300x200?text=No+Image'} 
+                  src={product.image || getFallbackImage(300, 200, 'No Image')}
                   alt={product.name}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Image+Not+Available';
+                    (e.target as HTMLImageElement).src = getFallbackImage(300, 200, 'Image Not Available');
                   }}
                 />
                 <ProductInfo>

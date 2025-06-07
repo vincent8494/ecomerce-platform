@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Search } from '@mui/icons-material';
 import type { CSSProperties } from 'react';
+import { handleImageError, getFallbackImage } from '../utils/imageUtils';
 
 interface Product {
   id: string | number;
@@ -60,7 +61,7 @@ const Home = () => {
           id: product.id || Math.random().toString(36).substr(2, 9),
           name: product.name || 'Unnamed Product',
           price: product.price || '$0.00',
-          image: product.image || 'https://via.placeholder.com/300x200?text=No+Image',
+          image: product.image || getFallbackImage(300, 200, 'No Image'),
           category: product.category || 'Uncategorized',
           description: product.description || `${product.name || 'Product'} - High quality product`,
           rating: product.rating || Math.floor(Math.random() * 2) + 4,
@@ -176,11 +177,7 @@ const Home = () => {
                       ...styles.productImage,
                       transform: hoveredProduct === product.id ? 'scale(1.05)' : 'scale(1)'
                     }}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.onerror = null;
-                      target.src = 'https://via.placeholder.com/200x200?text=No+Image';
-                    }}
+                    onError={handleImageError}
                   />
                 </div>
                 <div style={styles.productInfo}>
