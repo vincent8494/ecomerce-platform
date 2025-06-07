@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import {  Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import '../styles/profile.css'; // Import the CSS file
 
@@ -38,7 +39,7 @@ const storeLogo = new URL('../../public/fetty-logo.png', import.meta.url).href;
 // Remove theme configuration as we're using CSS for styling now
 
 const Profile = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const dispatch = useDispatch();
   const { user } = useSelector(selectAuth) as { user: UserProfile };
   const [activeTab, setActiveTab] = useState('profile');
@@ -92,11 +93,11 @@ const Profile = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    history.push('/login');
   };
 
   if (!user) {
-    navigate('/login');
+    history.push('/login');
     return null;
   }
 

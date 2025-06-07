@@ -1,5 +1,6 @@
-import { apiSlice } from '../store/api/apiSlice';
-import { User, PaginatedResponse } from '../types';
+import { apiSlice } from '../store/api/apiSlice';;
+import type { User, PaginatedResponse } from '../types';
+;
 
 const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

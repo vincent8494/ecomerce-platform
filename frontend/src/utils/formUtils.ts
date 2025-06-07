@@ -1,4 +1,4 @@
-import { FormikHelpers } from 'formik';
+import type { FormikHelpers } from 'formik';
 import { toast } from 'react-hot-toast';
 import { handleApiError } from './errorHandler';
 

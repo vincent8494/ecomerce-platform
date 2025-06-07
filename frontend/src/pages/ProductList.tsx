@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import {  } from 'react-router-dom';
 import styled from 'styled-components';
 import ProductGallery from '../components/products/ProductGallery';
 

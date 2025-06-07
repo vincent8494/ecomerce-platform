@@ -1,5 +1,5 @@
 import { apiSlice } from '../store/api/apiSlice';
-import { LoginFormData, RegisterFormData, User } from '../types';
+import type { LoginFormData, RegisterFormData, User } from '../types';
 
 const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

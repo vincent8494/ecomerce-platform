@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import {  Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '../store/api/apiSlice';
 
 const Login = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [login, { isLoading }] = useLoginMutation();
   const [formData, setFormData] = useState({
     email: '',
@@ -25,7 +26,7 @@ const Login = () => {
 
     try {
       await login(formData).unwrap();
-      navigate('/');
+      history.push('/');
     } catch (err: any) {
       setError(err.data?.message || 'Invalid email or password');
     }

@@ -1,5 +1,5 @@
 import { apiSlice } from '../store/api/apiSlice';
-import { Order, PaginatedResponse, ShippingAddress } from '../types';
+import type { Order, PaginatedResponse, ShippingAddress } from '../types';
 
 const orderApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -28,23 +28,38 @@ const orderApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Order'],
     }),
-    getOrder: builder.query<Order, string>({
+    getOrderById: builder.query<Order, string>({
       query: (id) => `/orders/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Order', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Order', id }],
     }),
-    getMyOrders: builder.query<Order[], void>({
-      query: () => '/orders/myorders',
-      providesTags: ['Order'],
+    getMyOrders: builder.query<PaginatedResponse<Order>, { page?: number; limit?: number }>({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: '/orders/myorders',
+        params: { page, limit },
+      }),
+      providesTags: (_result) =>
+        _result
+          ? [
+              ..._result.data.map((order) => ({ type: 'Order' as const, id: order._id })),
+              { type: 'Order', id: 'LIST' },
+            ]
+          : [{ type: 'Order', id: 'LIST' }],
     }),
     getAllOrders: builder.query<PaginatedResponse<Order>, { page?: number; limit?: number }>({
       query: (params = {}) => ({
         url: '/orders',
-        params: {
-          page: params.page || 1,
-          limit: params.limit || 10,
-        },
+        params,
       }),
-      providesTags: ['Order'],
+      providesTags: (_result) =>
+        _result
+          ? [
+              ..._result.data.map((order) => ({
+                type: 'Order' as const,
+                id: order._id,
+              })),
+              { type: 'Order', id: 'LIST' },
+            ]
+          : [{ type: 'Order', id: 'LIST' }],
     }),
     payOrder: builder.mutation<
       Order,
@@ -55,19 +70,20 @@ const orderApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: paymentResult,
       }),
-      invalidatesTags: (result, error, { orderId }) => [
+      invalidatesTags: (_result, _error, { orderId }) => [
         { type: 'Order', id: orderId },
         'Order',
       ],
     }),
-    deliverOrder: builder.mutation<Order, string>({
-      query: (orderId) => ({
-        url: `/orders/${orderId}/deliver`,
+    updateOrderToDelivered: builder.mutation<Order, string>({
+      query: (id) => ({
+        url: `/orders/${id}/deliver`,
         method: 'PUT',
       }),
-      invalidatesTags: (result, error, orderId) => [
-        { type: 'Order', id: orderId },
-        'Order',
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Order', id },
+        { type: 'Order', id: 'LIST' },
+        { type: 'User', id: 'ORDERS' },
       ],
     }),
     updateOrderStatus: builder.mutation<Order, { orderId: string; status: string }>({
@@ -76,7 +92,7 @@ const orderApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: { status },
       }),
-      invalidatesTags: (result, error, { orderId }) => [
+      invalidatesTags: (_result, _error, { orderId }) => [
         { type: 'Order', id: orderId },
         'Order',
       ],
@@ -87,10 +103,10 @@ const orderApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useCreateOrderMutation,
-  useGetOrderQuery,
+  useGetOrderByIdQuery,
   useGetMyOrdersQuery,
   useGetAllOrdersQuery,
   usePayOrderMutation,
-  useDeliverOrderMutation,
+  useUpdateOrderToDeliveredMutation,
   useUpdateOrderStatusMutation,
 } = orderApiSlice;

@@ -3,10 +3,9 @@ import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 
-import { CartItem } from '../types/cart';
+import type { CartItem } from '../types/cart';
 
-interface Product {
-  id: string | number;
+interface ProductBase {
   name: string;
   price: string;
   description: string;
@@ -17,8 +16,12 @@ interface Product {
   countInStock?: number;
 }
 
+interface Product extends ProductBase {
+  id: string | number;
+}
+
 const ProductDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -33,20 +36,19 @@ const ProductDetails = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
-        const products = await response.json();
-        const foundProduct = products.find((p: any) => p.id.toString() === id);
+        const products: Product[] = await response.json();
+        const foundProduct = products.find(p => String(p.id) === id);
         
         if (foundProduct) {
           // Transform the product to match our interface
           const productData: Product = {
-            id: foundProduct.id,
-            name: foundProduct.name,
-            price: foundProduct.price,
+            ...foundProduct,
+            id: String(foundProduct.id), // Ensure ID is a string
             description: foundProduct.description || `${foundProduct.name} - High quality product`,
             image: foundProduct.image || 'https://via.placeholder.com/500x500?text=No+Image',
             category: foundProduct.category || 'Uncategorized',
             rating: foundProduct.rating || Math.floor(Math.random() * 2) + 4,
-            countInStock: 10 // Default stock value
+            countInStock: foundProduct.countInStock ?? 10 // Default stock value if undefined
           };
           setProduct(productData);
         } else {

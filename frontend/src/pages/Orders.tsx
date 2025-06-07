@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/slices/authSlice';
 
 const Orders = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const { user } = useSelector(selectAuth);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,10 +29,11 @@ const Orders = () => {
   }, [user]);
 
   const handleOrderDetails = (orderId: string) => {
-    navigate(`/order/${orderId}`);
+    history.push(`/order/${orderId}`);
   };
 
   const handleOrderCancel = async (orderId: string) => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
     try {
       const response = await fetch(`/api/orders/${orderId}/cancel`, {
         method: 'POST',
@@ -51,6 +52,7 @@ const Orders = () => {
   };
 
   const handleOrderReturn = async (orderId: string) => {
+    if (!window.confirm('Are you sure you want to return this order?')) return;
     try {
       const response = await fetch(`/api/orders/${orderId}/return`, {
         method: 'POST',
@@ -69,7 +71,7 @@ const Orders = () => {
   };
 
   const getOrderStatusColor = (status: string) => {
-    const statusColors = {
+    const statusColors: Record<string, string> = {
       pending: 'yellow',
       processing: 'blue',
       shipped: 'orange',
@@ -78,7 +80,7 @@ const Orders = () => {
       returned: 'purple',
     };
 
-    return statusColors[status] || 'gray';
+    return statusColors[status as keyof typeof statusColors] || 'gray';
   };
 
   return (

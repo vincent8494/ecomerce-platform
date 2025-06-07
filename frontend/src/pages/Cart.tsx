@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import {  } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCart, removeFromCart, updateCartItem } from '../store/slices/cartSlice';
 
 const Cart = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const dispatch = useDispatch();
   const cart = useSelector(selectCart);
   const [coupon, setCoupon] = useState('');
@@ -68,7 +69,7 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    navigate('/checkout');
+    history.push('/checkout');
   };
 
   const calculateTotal = () => {
@@ -192,7 +193,7 @@ const Cart = () => {
 
       <div className="cart-empty-message" style={{ display: cart.items.length === 0 ? 'block' : 'none' }}>
         <p>Your cart is empty</p>
-        <button onClick={() => navigate('/')}>Continue Shopping</button>
+        <button onClick={() => history.push('/')}>Continue Shopping</button>
       </div>
     </div>
   );

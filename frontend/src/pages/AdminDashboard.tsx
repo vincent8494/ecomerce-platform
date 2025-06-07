@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import {  } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/slices/authSlice';
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const { user } = useSelector(selectAuth);
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -36,19 +37,19 @@ const AdminDashboard = () => {
   }, [user]);
 
   const handleManageProducts = () => {
-    navigate('/admin/products');
+    history.push('/admin/products');
   };
 
   const handleManageOrders = () => {
-    navigate('/admin/orders');
+    history.push('/admin/orders');
   };
 
   const handleManageUsers = () => {
-    navigate('/admin/users');
+    history.push('/admin/users');
   };
 
   const handleManageCategories = () => {
-    navigate('/admin/categories');
+    history.push('/admin/categories');
   };
 
   return (
