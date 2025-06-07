@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { selectAuth, logout } from "../store/slices/authSlice";
 import type { RootState } from "../store/store";
@@ -7,7 +7,7 @@ import { ShoppingCart, Search } from '@mui/icons-material';
 import PersonIcon from '@mui/icons-material/Person';
 
 const Navbar = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state: RootState) => selectAuth(state));
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +15,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    history.push('/login');
   };
 
   const toggleMobileMenu = () => {
@@ -24,7 +24,7 @@ const Navbar = () => {
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
-      navigate(`/products?search=${searchTerm}`);
+      history.push(`/products?search=${searchTerm}`);
       setShowMobileMenu(false);
     }
   };

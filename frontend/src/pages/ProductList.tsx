@@ -19,12 +19,18 @@ const PageTitle = styled.h1`
 
 const ProductList: React.FC = () => {
   const location = useLocation();
-  const { category = '' } = queryString.parse(location.search);
+  const { category } = queryString.parse(location.search);
+  // Convert category to string or undefined, handling all possible types from queryString.parse
+  const searchTerm = (() => {
+    if (!category) return undefined;
+    if (Array.isArray(category)) return category[0] || undefined;
+    return String(category); // Ensure we return a string, not string | null
+  })();
 
   return (
     <PageContainer>
       <PageTitle>Our Products</PageTitle>
-      <ProductGallery initialSearchTerm={category} />
+      <ProductGallery initialSearchTerm={searchTerm} />
     </PageContainer>
   );
 };

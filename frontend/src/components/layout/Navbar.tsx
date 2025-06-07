@@ -5,9 +5,27 @@ import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useNotifications } from '@/hooks/useNotifications';
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  isAdmin?: boolean;
+  // Add other user properties as needed
+}
+
 interface NavbarProps {
-  user?: any;
-  // Remove cartItems prop since we'll get it from useCart hook
+  user?: User | null;
+  loading?: boolean;
+  cartItems?: Array<{
+    product: {
+      _id: string;
+      name: string;
+      price: number;
+      images: string[];
+      stock: number;
+    };
+    quantity: number;
+  }>;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
