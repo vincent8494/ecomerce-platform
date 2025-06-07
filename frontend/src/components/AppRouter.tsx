@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 // Pages
 import Home from '../pages/Home';
@@ -21,6 +21,7 @@ import Register from '../pages/Register';
 import Profile from '../pages/Profile';
 import Orders from '../pages/Orders';
 import AdminDashboard from '../pages/AdminDashboard';
+import NotFound from '../pages/NotFound';
 
 // Components
 import Navbar from './Navbar';
@@ -29,53 +30,39 @@ import PrivateRoute from './PrivateRoute';
 import AdminRoute from './AdminRoute';
 
 const AppRouter = () => {
-  // Authentication state is available via PrivateRoute components
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/shipping" element={<ShippingPolicy />} />
-        <Route path="/returns" element={<ReturnsExchanges />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/new-arrivals" element={<NewArrivals />} />
-        <Route path="/sale" element={<SaleItems />} />
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/gallery" element={<ProductGalleryPage />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <PrivateRoute>
-              <Orders />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-      </Routes>
+      <Switch>
+        {/* Public Routes */}
+        <Route exact path="/" component={Home} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/shipping" component={ShippingPolicy} />
+        <Route path="/returns" component={ReturnsExchanges} />
+        <Route path="/faq" component={FAQ} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/new-arrivals" component={NewArrivals} />
+        <Route path="/sale" component={SaleItems} />
+        <Route exact path="/products" component={ProductList} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/gallery" component={ProductGalleryPage} />
+        <Route path="/product/:id" component={ProductDetails} />
+        <Route path="/cart" component={Cart} />
+        <Route path="/checkout" component={Checkout} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+
+        {/* Protected Routes */}
+        <PrivateRoute path="/profile" component={Profile} />
+        <PrivateRoute path="/orders" component={Orders} />
+
+        {/* Admin Routes */}
+        <AdminRoute path="/admin/dashboard" component={AdminDashboard} />
+
+        {/* 404 - Keep this at the bottom */}
+        <Route path="*" component={NotFound} />
+      </Switch>
       <Footer />
     </Router>
   );
