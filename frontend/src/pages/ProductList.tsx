@@ -1,4 +1,5 @@
-import {  } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import queryString from 'query-string';
 import styled from 'styled-components';
 import ProductGallery from '../components/products/ProductGallery';
 
@@ -17,13 +18,13 @@ const PageTitle = styled.h1`
 `;
 
 const ProductList: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const searchTerm = searchParams.get('search') || '';
+  const location = useLocation();
+  const { category = '' } = queryString.parse(location.search);
 
   return (
     <PageContainer>
       <PageTitle>Our Products</PageTitle>
-      <ProductGallery initialSearchTerm={searchTerm} />
+      <ProductGallery initialSearchTerm={category} />
     </PageContainer>
   );
 };

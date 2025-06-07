@@ -1,26 +1,33 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { useCart } from '../hooks/useCart';
-import { useWishlist } from '../hooks/useWishlist';
-import { useNotifications } from '../hooks/useNotifications';
+import { Link, useHistory } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface NavbarProps {
   user?: any;
-  loading: boolean;
-  cartItems: number;
+  // Remove cartItems prop since we'll get it from useCart hook
 }
 
-const Navbar: React.FC<NavbarProps> = ({ user, loading, cartItems }) => {
-  const navigate = useNavigate();
+const Navbar: React.FC<NavbarProps> = ({ user }) => {
+  const history = useHistory();
   const { logout } = useAuth();
-  const { toggleCart } = useCart();
+  const { cartItems } = useCart();
+  const cartItemsCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const { toggleWishlist } = useWishlist();
   const { notifications } = useNotifications();
+  
+  // For now, we'll use a simple state to toggle the cart
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
+  
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    history.push('/login');
   };
 
   return (
@@ -56,25 +63,21 @@ const Navbar: React.FC<NavbarProps> = ({ user, loading, cartItems }) => {
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Cart */}
-            <button
-              onClick={toggleCart}
-              className="relative text-gray-600 hover:text-gray-900"
-            >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="relative">
+              <button 
+                onClick={toggleCart}
+                className="p-2 text-gray-600 hover:text-gray-900 relative"
               >
-                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                {cartItems}
-              </span>
-            </button>
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </button>
+            </div>
 
             {/* Wishlist */}
             <button

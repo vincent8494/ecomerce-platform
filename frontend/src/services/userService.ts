@@ -22,7 +22,7 @@ const userApiSlice = apiSlice.injectEndpoints({
     }),
     getUser: builder.query<User, string>({
       query: (id) => `/users/${id}`,
-      providesTags: (result, error, id) => [{ type: 'User', id }],
+      providesTags: (_result, _error, id) => [{ type: 'User', id }],
     }),
     createUser: builder.mutation<User, FormData>({
       query: (userData) => ({
@@ -38,7 +38,7 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: userData,
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'User', id },
         'User',
       ],
@@ -69,7 +69,7 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: { role },
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'User', id },
         'User',
       ],

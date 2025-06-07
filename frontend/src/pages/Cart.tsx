@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {  } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCart, removeFromCart, updateCartItem } from '../store/slices/cartSlice';
 

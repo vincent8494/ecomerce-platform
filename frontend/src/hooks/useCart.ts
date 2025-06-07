@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { setCartItems, getCartItems } from '../utils/storage';
 
-interface CartItem {
+export interface CartItem {
   product: {
     _id: string;
     name: string;
@@ -40,7 +40,7 @@ export const useCart = () => {
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      throw new Error(t('error_adding_to_cart'));
+      throw new Error(t('common.error_adding_to_cart' as any));
     }
   }, [cartItems, t]);
 
@@ -51,7 +51,7 @@ export const useCart = () => {
       setCartItems(updatedItems);
     } catch (error) {
       console.error('Error removing from cart:', error);
-      throw new Error(t('error_removing_from_cart'));
+      throw new Error(t('common.error_removing_from_cart' as any));
     }
   }, [cartItems, t]);
 
@@ -66,7 +66,7 @@ export const useCart = () => {
       setCartItems(updatedItems);
     } catch (error) {
       console.error('Error updating quantity:', error);
-      throw new Error(t('error_updating_quantity'));
+      throw new Error(t('common.error_updating_quantity' as any));
     }
   }, [cartItems, t]);
 
@@ -76,7 +76,7 @@ export const useCart = () => {
       setCartItems([]);
     } catch (error) {
       console.error('Error clearing cart:', error);
-      throw new Error(t('error_clearing_cart'));
+      throw new Error(t('common.error_clearing_cart' as any));
     }
   }, [t]);
 

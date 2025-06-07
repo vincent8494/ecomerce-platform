@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {  Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import '../styles/profile.css'; // Import the CSS file
 
