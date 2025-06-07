@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
-import { useTranslation } from 'react-i18next';
 
 interface Category {
   _id: string;
@@ -11,7 +10,6 @@ interface Category {
 }
 
 export const useCategories = () => {
-  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +22,7 @@ export const useCategories = () => {
         const response = await apiClient.get('/categories');
         setCategories(response.data.categories);
       } catch (err: any) {
-        setError(t('error_loading_categories'));
+        setError('Failed to load categories. Please try again later.');
         console.error('Error fetching categories:', err);
       } finally {
         setLoading(false);
@@ -32,7 +30,7 @@ export const useCategories = () => {
     };
 
     fetchCategories();
-  }, [t]);
+  }, []);
 
   return { categories, loading, error };
 };

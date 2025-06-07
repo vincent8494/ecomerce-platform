@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { useRegisterMutation } from '../store/api/apiSlice';
 import { Google as GoogleIcon, Facebook as FacebookIcon } from '@mui/icons-material';
 import { Button, TextField, Typography, Box, Paper, Divider, Alert } from '@mui/material';
@@ -50,7 +50,7 @@ interface FormData {
 }
 
 const Register = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [register, { isLoading }] = useRegisterMutation();
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -91,7 +91,7 @@ const Register = () => {
     try {
       setLoading(true);
       await register(formData).unwrap();
-      navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
+      history.push('/login', { message: 'Registration successful! Please log in.' });
     } catch (err: any) {
       setError(err.data?.message || 'Registration failed. Please try again.');
     } finally {
@@ -107,7 +107,7 @@ const Register = () => {
       if (provider === 'google') {
         // For Google, we'll use the Google Identity Services library
         const client = window.google?.accounts.oauth2.initCodeClient({
-          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
           scope: 'email profile',
           ux_mode: 'popup',
           callback: async (response: any) => {
@@ -128,7 +128,7 @@ const Register = () => {
 
               // Handle successful login (store token, redirect, etc.)
               localStorage.setItem('token', data.token);
-              navigate('/dashboard');
+              history.push('/dashboard');
             } catch (err: any) {
               setError(err.message || 'Failed to authenticate with Google');
             } finally {
@@ -164,7 +164,7 @@ const Register = () => {
 
                 // Handle successful login
                 localStorage.setItem('token', data.token);
-                navigate('/dashboard');
+                history.push('/dashboard');
               } catch (err: any) {
                 setError(err.message || 'Failed to authenticate with Facebook');
               } finally {
@@ -201,7 +201,7 @@ const Register = () => {
     facebookScript.onload = () => {
       if (window.FB) {
         window.FB.init({
-          appId: process.env.REACT_APP_FACEBOOK_APP_ID || '',
+          appId: import.meta.env.VITE_FACEBOOK_APP_ID || '',
           cookie: true,
           xfbml: true,
           version: 'v12.0',

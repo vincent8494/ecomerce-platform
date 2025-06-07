@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
 import { useCategories } from '../../hooks/useCategories';
 import { useCart } from '../../hooks/useCart';
@@ -51,7 +51,18 @@ const ProductList: React.FC = () => {
   
   // Helper function to get translations with proper typing
   const getTranslation = (key: TranslationKey): string => t(key);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const history = useHistory();
+  const searchParams = new URLSearchParams(location.search);
+  
+  const setSearchParams = (updater: (prev: URLSearchParams) => URLSearchParams) => {
+    const newParams = updater(new URLSearchParams(location.search));
+    const searchString = newParams.toString();
+    const newPath = searchString 
+      ? `${location.pathname}?${searchString}`
+      : location.pathname;
+    history.push(newPath);
+  };
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState<string>(searchParams.get('category') || '');
   const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('search') || '');

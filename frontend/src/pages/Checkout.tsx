@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectCart } from '../store/slices/cartSlice';
+import type { CartState } from '../store/slices/cartSlice';
 import type { RootState } from '../store/store';
-import type { CartState } from '../types/cart';
 
 type FormData = {
   shipping: {
@@ -74,7 +74,7 @@ const Checkout: React.FC = () => {
   });
   
   const { subtotal, shipping, tax, total } = useMemo(() => {
-    const calculatedSubtotal = cart.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const calculatedSubtotal = cart.items.reduce((sum: number, item: any) => sum + (item.price * item.qty), 0);
     const calculatedShipping = cart.shippingPrice || 0;
     const calculatedTax = (calculatedSubtotal * 0.13).toFixed(2);
     const calculatedTotal = (calculatedSubtotal + calculatedShipping + Number(calculatedTax)).toFixed(2);

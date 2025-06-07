@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
-import { useTranslation } from 'react-i18next';
 
 interface Product {
   _id: string;
@@ -35,7 +34,6 @@ export const useProducts = ({
   maxPrice,
   rating,
 }: UseProductsProps) => {
-  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +60,7 @@ export const useProducts = ({
         setProducts(response.data.products);
         setTotalPages(response.data.totalPages);
       } catch (err: any) {
-        setError(t('error_loading_products'));
+        setError('Failed to load products. Please try again later.');
         console.error('Error fetching products:', err);
       } finally {
         setLoading(false);
@@ -70,7 +68,7 @@ export const useProducts = ({
     };
 
     fetchProducts();
-  }, [page, category, search, sort, minPrice, maxPrice, rating, t]);
+  }, [page, category, search, sort, minPrice, maxPrice, rating]);
 
   return { products, loading, error, totalPages };
 };

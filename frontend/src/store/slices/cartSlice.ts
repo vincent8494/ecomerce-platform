@@ -2,7 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { CartItem } from '../../types/cart';
 
-interface CartState {
+declare global {
+  interface Window {
+    localStorage: Storage;
+  }
+}
+
+export interface CartState {
   items: CartItem[];
   shippingAddress: any;
   paymentMethod: string;
@@ -37,7 +43,7 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<CartItem>) => {
+    addToCart: (state: CartState, action: PayloadAction<CartItem>) => {
       const item = action.payload;
       const existItem = state.items.find((x: CartItem) => x.product === item.product);
 
@@ -50,23 +56,23 @@ const cartSlice = createSlice({
       }
       localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
-    removeFromCart: (state, action: PayloadAction<string>) => {
+    removeFromCart: (state: CartState, action: PayloadAction<string>) => {
       state.items = state.items.filter((item: CartItem) => item.product !== action.payload);
       localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
-    saveShippingAddress: (state, action: PayloadAction<any>) => {
+    saveShippingAddress: (state: CartState, action: PayloadAction<Record<string, unknown>>) => {
       state.shippingAddress = action.payload;
       localStorage.setItem('shippingAddress', JSON.stringify(action.payload));
     },
-    savePaymentMethod: (state, action: PayloadAction<string>) => {
+    savePaymentMethod: (state: CartState, action: PayloadAction<string>) => {
       state.paymentMethod = action.payload;
       localStorage.setItem('paymentMethod', action.payload);
     },
-    clearCartItems: (state) => {
+    clearCartItems: (state: CartState) => {
       state.items = [];
       localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
-    updateCartItem: (state, action: PayloadAction<{ productId: string; qty: number }>) => {
+    updateCartItem: (state: CartState, action: PayloadAction<{ productId: string; qty: number }>) => {
       const { productId, qty } = action.payload;
       const item = state.items.find((item: CartItem) => item.product === productId);
       
@@ -75,9 +81,9 @@ const cartSlice = createSlice({
         localStorage.setItem('cartItems', JSON.stringify(state.items));
       }
     },
-    calculatePrices: (state) => {
-      const itemsPrice = state.items.reduce(
-        (acc, item) => acc + item.price * item.qty,
+    calculatePrices: (state: CartState) => {
+      const itemsPrice = state.items.reduce<number>(
+        (acc: number, item: CartItem) => acc + item.price * item.qty,
         0
       );
       state.itemsPrice = itemsPrice;
@@ -87,7 +93,7 @@ const cartSlice = createSlice({
         (itemsPrice + state.shippingPrice + state.taxPrice).toFixed(2)
       );
     },
-    resetCart: () => {
+    resetCart: (): CartState => {
       localStorage.removeItem('cartItems');
       localStorage.removeItem('shippingAddress');
       localStorage.removeItem('paymentMethod');
@@ -98,7 +104,7 @@ const cartSlice = createSlice({
         itemsPrice: 0,
         shippingPrice: 0,
         taxPrice: 0,
-        totalPrice: 0,
+        totalPrice: 0
       };
     },
   },
