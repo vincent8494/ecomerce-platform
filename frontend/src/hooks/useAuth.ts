@@ -1,35 +1,29 @@
-<<<<<<< HEAD
-import { useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout as logoutAction } from '../store/slices/authSlice';
-
-export const useAuth = () => {
-  const dispatch = useDispatch();
-  
-  const logout = useCallback(async () => {
-    try {
-      // Add any logout API call here if needed
-      dispatch(logoutAction());
-    } catch (error) {
-      console.error('Logout failed:', error);
-      throw error;
-    }
-  }, [dispatch]);
-
-  return { logout };
-=======
-import { useState, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { User } from '../types';
-import { AuthContextType } from '../types/hooks';
+import type { User } from '../types';
+import type { AuthContextType } from '../types/hooks';
 
 export const useAuth = (): AuthContextType => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const history = useHistory();
+  const dispatch = useDispatch();
+  
+  // Initialize Redux state if user is already logged in
+  useEffect(() => {
+    if (user) {
+      // Initialize Redux auth state here if needed
+      // dispatch(loginSuccess(user));
+    }
+  }, [user, dispatch]);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string, _password: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -58,7 +52,7 @@ export const useAuth = (): AuthContextType => {
     }
   }, [history]);
 
-  const register = useCallback(async (name: string, email: string, password: string) => {
+  const register = useCallback(async (name: string, email: string, _password: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -93,15 +87,22 @@ export const useAuth = (): AuthContextType => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
       
+      // Clear local state
       setUser(null);
       localStorage.removeItem('user');
+      
+      // Update Redux state
+      dispatch(logoutAction());
+      
+      // Redirect to login
+      history.push('/login');
     } catch (err) {
       console.error('Logout error:', err);
+      setError('Failed to logout. Please try again.');
     } finally {
       setLoading(false);
-      history.push('/login');
     }
-  }, [history]);
+  }, [history, dispatch]);
 
   return {
     user,
@@ -111,7 +112,7 @@ export const useAuth = (): AuthContextType => {
     loading,
     error,
   };
->>>>>>> 312d538 (Add React hooks, context providers, and theme for e-commerce platform)
+
 };
 
 export default useAuth;
